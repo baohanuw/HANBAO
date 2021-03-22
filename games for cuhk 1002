@@ -1,0 +1,93 @@
+import random
+
+def check_move(board, directions):
+    s = ""
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j] == ' ':
+                row = i; col = j
+    n = len(board)
+    if col!=n-1:
+        s += directions[0]
+    if col != 0:
+        s += directions[1]
+    if row != n-1:
+        s += directions[2]
+    if row != 0:
+        s += directions[3]
+    return s
+
+def is_win(board):
+    real = 1
+    for i in range(len(board)):
+        for j in range(len(board)):
+           if i+j == len(board)*2-2:continue
+           if board[i][j] == ' ':return False
+           if int(board[i][j]) != real:return False
+           real += 1
+    return True
+def move(board, d, directions):
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j] == ' ':
+                row = i; col = j
+    if d == directions[0]:
+        board[row][col],board[row][col+1] = board[row][col+1], board[row][col]
+    if d == directions[1]:
+        board[row][col],board[row][col-1] = board[row][col-1], board[row][col]
+    if d == directions[2]:
+        board[row][col],board[row+1][col] = board[row+1][col], board[row][col]
+    if d == directions[3]:
+        board[row][col],board[row-1][col] = board[row-1][col], board[row][col]
+
+
+def print_board(puzzle):
+    for i in range(len(puzzle)):
+        for j in range(len(puzzle)):
+            print(" %s"%(puzzle[i][j].rjust(2," ")), end = '')
+        print()
+    
+def main():
+    print("Welcome to Kinley’s puzzle game!!")
+    n = int(input("Enter the desired dimension of the puzzle >"))
+    directions = input("Enter the four letters used for left, right, up and down directions >")
+    dirs = directions.split()
+    while True:
+        board = []
+        cnt = 1
+        for i in range(n):
+            tmp = []
+            for j in range(n):
+                if i == n-1 and j == n-1:
+                    tmp.append(' ')
+                tmp.append(str(cnt))
+                cnt += 1
+            board.append(tmp)
+        random.shuffle(board)
+        print_board(board)
+        now_moves = 0
+        while is_win(board)==False:
+            msg = "Enter your move ("
+            movedirs = check_move(board, dirs)
+            if dirs[0] in movedirs:
+                msg +="left-%s,"%(dirs[0])
+            if dirs[1] in movedirs:
+                msg +="right-%s,"%(dirs[1])
+            if dirs[2] in movedirs:
+                msg +="up-%s,"%(dirs[2])
+            if dirs[3] in movedirs:
+                msg +="down-%s,"%(dirs[3])
+            msg = msg[:-1] + ") > "
+            next_move = input(msg)
+            if next_move in movedirs:
+                move(board, next_move, dirs)
+                print_board(board)
+                now_moves += 1
+        print("Congratulations! You solved the puzzle in %d moves!"%(now_moves))
+        
+        play_again = input("Enter ‘n’ to start a new game or enter ‘q’ to end the game > ")
+        if play_again != 'n':
+            print("Thank you for playing puzzle game!!")
+            break
+
+main()
